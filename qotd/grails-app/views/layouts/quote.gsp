@@ -5,6 +5,7 @@
 <g:createLinkTo dir='css' file='snazzy.css' />
 " />
 <g:layoutHead />
+<r:layoutResources/>
 </head>
 <body>
 <div id="header">
@@ -13,5 +14,6 @@
 " alt="logo"/>
 </div>
 <g:layoutBody />
+<r:layoutResources/>
 </body>
 </html>
