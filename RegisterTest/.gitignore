@@ -10,7 +10,8 @@ stacktrace.log
 /cobertura.ser
 .DS_Store
 /target/
+/target-eclipse/
 /out/
 /web-app/plugins
 /web-app/WEB-INF/classes
-/target-eclipse/
+/.link_to_grails_plugins
