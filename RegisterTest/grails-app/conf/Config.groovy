@@ -62,6 +62,7 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+		app.context='registertest'
     }
     production {
         grails.logging.jul.usebridge = false
