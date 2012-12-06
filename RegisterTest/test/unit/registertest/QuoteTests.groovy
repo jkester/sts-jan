@@ -20,7 +20,7 @@ class QuoteTests {
 		def existingQuote = new Quote( author: "Jenkins", statement: "Stop it")
 		mockForConstraintsTests(Quote, [existingQuote])
 
-		// validation should fail if both properties are null def book = new Book()
+		// validation should fail if both properties are null
 		def quote = new Quote()
 		assert !quote.validate() 
 		println "author error: ${quote.errors['author']}"
