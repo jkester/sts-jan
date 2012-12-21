@@ -6,8 +6,11 @@ class UrlMappings {
 				// apply constraints here
 			}
 		}
-		"/testexecution/$id"(controller: "testExecution") {
+		"/rest/testexecution/$id"(controller: "restTestExecution") {
 			action = [GET: "show", PUT: "update", DELETE: "delete", POST: "save"]
+		}
+		"/rest/testexecution/"(controller: "restTestExecution") {
+			action = [GET: "list"]
 		}
 		"/"(view:"/index")
 		"500"(view:'/error')

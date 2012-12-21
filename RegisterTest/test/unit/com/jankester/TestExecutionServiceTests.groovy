@@ -40,4 +40,39 @@ class TestExecutionServiceTests {
 		
 		println "Tested service methods"
     }
+	
+	void testFindAll() {
+		Date start = new Date();
+		mockDomain(TestExecution,[
+				[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+				[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+				[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+				[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+			]);
+		Date end = new Date();
+		assert TestExecution.list().size() == 4;
+		def allList = testExecutionService.findAll();
+		println "Found ${allList.size()} elements"
+		assert allList.size() == 4,'Should find 4 elements'
+		
+		println "Tested all."
+	}
+	
+	void testFindById() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+	Date end = new Date();
+	assert TestExecution.list().size() == 4;
+	def obj1 = testExecutionService.findById(1);
+	println "Found ${obj1} ${obj1.testScript}"
+	assert obj1.id == 1,'Should find object with id 1'
+	
+	println "Tested by id."
+
+	}
+
 }

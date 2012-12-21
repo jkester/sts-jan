@@ -9,4 +9,12 @@ class TestExecutionService {
 	def findBetweenExecDates(Date start, Date end) {
 		return TestExecution.findAllByTestDateBetween(start, end)
 	}
+	
+	def findAll() {
+		return TestExecution.findAll()
+	}
+	
+	def findById(def id) {
+		return TestExecution.findById(id);
+	}
 }
