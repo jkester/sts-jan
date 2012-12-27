@@ -10,6 +10,7 @@ class RestTestExecutionController {
 	def show = {
 		def item = testExecutionService.findById(params.id);
 		if (!item) {
+			log.error "Did not find ${params.id}"
 			withFormat renderNotFound;
 		}
 		else {
@@ -25,6 +26,14 @@ class RestTestExecutionController {
 
 	def delete = {
 		//http://www.springminutes.com/2011/06/grails-controllers-and-rest-part-2.html
+		def deletedId = testExecutionService.removeById(params.id);
+		if (deletedId == null) {
+			log.error "Did not find ${params.id}"
+			withFormat renderNotFound;
+		}
+		else {
+			response.status = 204;
+		}
 	}
 
 	def save = {}
@@ -53,4 +62,6 @@ class RestTestExecutionController {
 			render "TestExecution not found."
 		}
 	}
+	
+	
 }

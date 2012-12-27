@@ -65,14 +65,57 @@ class TestExecutionServiceTests {
 			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
 			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
 		]);
-	Date end = new Date();
-	assert TestExecution.list().size() == 4;
-	def obj1 = testExecutionService.findById(1);
-	println "Found ${obj1} ${obj1.testScript}"
-	assert obj1.id == 1,'Should find object with id 1'
-	
-	println "Tested by id."
+		assert TestExecution.list().size() == 4;
+		def obj1 = testExecutionService.findById(1);
+		println "Found ${obj1} ${obj1.testScript}"
+		assert obj1.id == 1,'Should find object with id 1'
+		
+		println "Tested by id."
 
 	}
-
+	
+	void testFindByIdNotExisting() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 1;
+		def obj1 = testExecutionService.findById(2);
+		println "Result of find by non existing id: $obj1"
+		assert obj1 == null,'Should not find object with id 2'
+		
+		println "Tested by non existing id."
+	}
+	
+	void testRemoveById() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 4,'Initial list should be 4 big.';
+		def obj1 = testExecutionService.removeById(1);
+		println "Deleted ${obj1} "
+		assert obj1 == 1,'Should get id of deleted object'
+		assert TestExecution.list().size() == 3,'After delete, list should only have 3 items.';
+		
+		println "Tested remove by id."
+	}
+	
+	void testRemoveByNonExistingId() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 4,'Initial list should be 4 big.';
+		def obj1 = testExecutionService.removeById(5);
+		println "Id of deleted object: ${obj1} "
+		assert obj1 == null,'Returned id of deleted object should be null'
+		assert TestExecution.list().size() == 4,'After delete, list should still have 4 items.';
+		
+		println "Tested remove by id."
+	}
+	
 }
