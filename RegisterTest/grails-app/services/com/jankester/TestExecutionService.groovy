@@ -22,10 +22,12 @@ class TestExecutionService {
 		def o = TestExecution.findById(id);
 		if (o == null) {
 			log.error("Did not find object with id=$id");
+			id = null;
 		}
 		else {
+			log.info "Going to delete object id=$id"
 			o.delete(flush:true);
 		}
-		return o?.id;
+		return id;
 	}
 }
