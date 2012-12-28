@@ -30,4 +30,13 @@ class TestExecutionService {
 		}
 		return id;
 	}
+	
+	def save(TestExecution o) {
+		log.info "Saving object with id=${o?.id}"
+		if (o == null) {
+			throw new RuntimeException('Cannot call save(TestExecution o) with null object.')
+		}
+		o.save(flush: true, failOnError: true);
+		return o;
+	}
 }

@@ -106,4 +106,95 @@ class RestTestExecutionControllerTests {
 		assert response.status == 404,'Expecting to see 404 after deleting non existing entry'
 		println "Tested delete for non existing id of rest controller."
 	}
+	
+	void testSaveNew() {
+		String now = (new Date()).getDateString();
+		response.format = "json";
+		request.method ="POST";
+		request.json = "{host:'localhost',testscript:'doublelines.groovy',browser:'firefox',testurl:'coulthard',appversion:'2011.R11.RC1',testdate:'now'}"
+		
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+
+		def control = mockFor(TestExecutionService)
+		control.demand.save(1..1) {TestExecution o -> o.id = 2; return o;}
+		controller.testExecutionService = control.createMock()
+		controller.save();
+		
+		println "response=${response.text}"
+		println response.json
+		assert response.status == 200,'Expecting insert to succeed'		
+		assert response.json.id == 2,'Expecting to get new object with id 2'
+		assert response.json.testScript == 'doublelines.groovy','Expecting test script to be updated for id=2'		
+		
+		println "Tested save new of rest controller"
+	}
+	
+	void testSaveNewValidationError() {
+		String now = (new Date()).getDateString();
+		response.format = "json";
+		request.method ="POST";
+		request.json = "{host:'localhost',testscript:'doublelines.groovy',browser:'firefox',appversion:'2011.R11.RC1',testdate:'now'}"
+		
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		
+		controller.save();
+		
+		println "Response status=${response.status}"
+		assert response.status == 409,'Expecting to see 409 after save with wrong data'
+		
+		println "Tested save new with validation error."
+		
+	}
+	
+	void testSaveUpdate() {
+		String now = (new Date()).getDateString();		
+		response.format = "json";
+		request.method ="POST";
+		params.id = 2
+		request.json = "{host:'localhost',testscript:'doublelines.groovy',browser:'firefox',testurl:'coulthard',appversion:'2011.R11.RC1',testdate:'now'}"
+
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()]	
+		]);
+
+		def control = mockFor(TestExecutionService)
+		control.demand.findById(1..1) {def id -> TestExecution.get(id) }
+		control.demand.save(1..1) {TestExecution o -> return o;}
+		controller.testExecutionService = control.createMock()
+		controller.save();
+
+		println response.text
+		println response.json
+		assert response.status == 200,'Expecting update to succeed'
+		assert response.json.testScript == 'doublelines.groovy','Expecting test script to be updated for id=2'
+
+		println "Tested save existing of rest controller"
+		
+	}
+	
+	void XXXtestSaveExistingValidationError() {
+		String now = (new Date()).getDateString();
+		response.format = "json";
+		request.method ="POST";
+		params.id = 2
+		request.json = "{host:4}"
+		
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()]	
+		]);
+
+		
+		controller.save();
+		
+		println "Response status=${response.status}"
+		assert response.status == 409,'Expecting to see 409 after save with wrong data'
+		
+		println "Tested save existing with validation error."
+	}
 }

@@ -4,6 +4,7 @@ package com.jankester
 
 import grails.test.mixin.*
 import grails.test.mixin.domain.DomainClassUnitTestMixin;
+import grails.validation.ValidationException;
 
 import org.junit.*
 
@@ -117,5 +118,103 @@ class TestExecutionServiceTests {
 		
 		println "Tested remove by id."
 	}
+	
+	void testSaveNew() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 3,'Initial list should be 3 big.';
+		TestExecution te = new TestExecution(host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date())
+		def o = testExecutionService.save(te);
+		assert TestExecution.list().size() == 4,'After save, we should have one object more.';
+		println "New object=$o"
+		assert o.id==4, 'Expecting new object with id 4.'
+		
+		println "Tested save new."
+	}
+	
+	void testSaveExisting() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 3,'Initial list should be 3 big.';
+		TestExecution te = TestExecution.get(3)
+		te.browser = 'iexplorer';
+		def o = testExecutionService.save(te);
+		assert TestExecution.list().size() == 3,'After save of existing, we should still have three.';
+		println "Returned object=$o and browser=${o.browser}"
+		assert o.id==3, 'Expecting object with id 3.'
+		assert o.browser == 'iexplorer','Browser shoulb be iexplorer.'
+		
+		println "Tested save existing."
+	}
+	
+	void testSaveNull() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 3,'Initial list should be 3 big.';
+		try {
+			def o = testExecutionService.save(null);
+			fail('We should not reach this line but land in catch because of null object in save.')
+		}
+		catch (RuntimeException e) {
+			println e.getMessage();
+			assert e.message =~ 'Cannot call.*null.*','Exception message should contain warning about null'
+		}
+		assert TestExecution.list().size() == 3,'After attempt of save of null object, we should still have three.';
+		
+		println "Tested save null."
+	}
+	
+	void testSaveNewWithErrors() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 3,'Initial list should be 3 big.';
+		TestExecution te = new TestExecution(host:null,testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date())
+		try {
+			def o = testExecutionService.save(te);
+			fail('We should not reach this line but land in catch because of validation error.')
+		}
+		catch (ValidationException e) {
+			println e.getMessage();
+			assert e.message =~ 'Field error.*host.*null.*','Exception message should contain warning about host and null'
+		}
+		assert TestExecution.list().size() == 3,'After failed save, we should still have three objects.';
+		
+		println "Tested save new with validation errors."
+	}
+	
+	void testSaveExistingWithErrors() {
+		mockDomain(TestExecution,[
+			[host:'localhost',testScript:'poiundo.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'zoom.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R11.RC1',testDate:new Date()],
+			[host:'localhost',testScript:'doublelines.groovy',browser:'firefox',testUrl:'coulthard',appVersion:'2011.R12.RC1',testDate:new Date()]
+		]);
+		assert TestExecution.list().size() == 3,'Initial list should be 3 big.';
+		TestExecution te = TestExecution.get(3)
+		te.host = null;
+		try {
+			def o = testExecutionService.save(te);
+			fail('We should not reach this line but land in catch because of validation error.')			
+		}
+		catch (ValidationException e) {
+			println e.getMessage();
+			assert e.message =~ 'Field error.*host.*null.*','Exception message should contain warning about host and null'
+		}
+		assert TestExecution.list().size() == 3,'After failed save, we should still have three objects.';
+		
+		println "Tested save existing with validation errors."
+	}
+	
 	
 }
