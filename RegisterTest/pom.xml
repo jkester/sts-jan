@@ -109,6 +109,14 @@
         <scope>compile</scope>
         <type>zip</type>
     </dependency>
+    
+	<dependency>
+        <groupId>org.grails.plugins</groupId>
+        <artifactId>rest-client-builder</artifactId>
+        <version>1.0.2</version>
+        <scope>compile</scope>
+        <type>zip</type>
+    </dependency>    
 
     </dependencies>
 
