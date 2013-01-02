@@ -93,8 +93,22 @@
         <scope>runtime</scope>
         <type>zip</type>
     </dependency>
-                    
 
+	<dependency>
+        <groupId>org.grails.plugins</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>1.2.7.3</version>
+        <scope>compile</scope>
+        <type>zip</type>
+    </dependency>                    
+
+	<dependency>
+        <groupId>org.grails.plugins</groupId>
+        <artifactId>rest</artifactId>
+        <version>0.7</version>
+        <scope>compile</scope>
+        <type>zip</type>
+    </dependency>
 
     </dependencies>
 
